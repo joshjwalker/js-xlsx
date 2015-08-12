@@ -7,8 +7,8 @@ var XLSX = {};
 XLSX.version = '0.8.0';
 var current_codepage = 1200, current_cptable;
 if(typeof module !== "undefined" && typeof require !== 'undefined') {
-	if(typeof cptable === 'undefined') cptable = require('./dist/cpexcel');
-	current_cptable = cptable[current_codepage];
+	//if(typeof cptable === 'undefined') cptable = require('./dist/cpexcel');
+	//current_cptable = cptable[current_codepage];
 }
 function reset_cp() { set_cp(1200); }
 var set_cp = function(cp) { current_codepage = cp; };
@@ -1199,15 +1199,17 @@ function read_date(blob, offset) {
 	return new Date(( ( (__readUInt32LE(blob,offset+4)/1e7)*Math.pow(2,32)+__readUInt32LE(blob,offset)/1e7 ) - 11644473600)*1000);
 }
 
+/*
 var fs;
 function readFileSync(filename, options) {
 	if(fs === undefined) fs = require('fs');
 	return parse(fs.readFileSync(filename), options);
 }
+*/
 
 function readSync(blob, options) {
 	switch(options !== undefined && options.type !== undefined ? options.type : "base64") {
-		case "file": return readFileSync(blob, options);
+		//case "file": return readFileSync(blob, options);
 		case "base64": return parse(s2a(Base64.decode(blob)), options);
 		case "binary": return parse(s2a(blob), options);
 	}
@@ -1331,13 +1333,13 @@ function getzipdata(zip, file, safe) {
 	try { return getzipdata(zip, file); } catch(e) { return null; }
 }
 
-var _fs, jszip;
+var /*_fs,*/ jszip;
 if(typeof JSZip !== 'undefined') jszip = JSZip;
 if (typeof exports !== 'undefined') {
 	if (typeof module !== 'undefined' && module.exports) {
-		if(has_buf && typeof jszip === 'undefined') jszip = require('js'+'zip');
-		if(typeof jszip === 'undefined') jszip = require('./js'+'zip').JSZip;
-		_fs = require('f'+'s');
+		//if(has_buf && typeof jszip === 'undefined') jszip = require('js'+'zip');
+		if(typeof jszip === 'undefined') jszip = require('./js'+'zip')/*.JSZip*/;
+		//_fs = require('f'+'s');
 	}
 }
 var attregexg=/([\w:]+)=((?:")([^"]*)(?:")|(?:')([^']*)(?:'))/g;
@@ -11081,11 +11083,13 @@ var XLSRecordEnum = {
 
 
 /* Helper function to call out to ODS parser */
+/*
 function parse_ods(zip, opts) {
 	if(typeof module !== "undefined" && typeof require !== 'undefined' && typeof ODS === 'undefined') ODS = require('./od' + 's');
 	if(typeof ODS === 'undefined' || !ODS.parse_ods) throw new Error("Unsupported ODS");
 	return ODS.parse_ods(zip, opts);
 }
+*/
 function fix_opts_func(defaults) {
 	return function fix_opts(opts) {
 		for(var i = 0; i != defaults.length; ++i) {
@@ -11149,7 +11153,7 @@ function parse_zip(zip, opts) {
 	reset_cp();
 
 	/* OpenDocument Part 3 Section 2.2.1 OpenDocument Package */
-	if(safegetzipfile(zip, 'META-INF/manifest.xml')) return parse_ods(zip, opts);
+	//if(safegetzipfile(zip, 'META-INF/manifest.xml')) return parse_ods(zip, opts);
 
 	var entries = keys(zip.files).filter(nodirs).sort();
 	var dir = parse_ct(getzipdata(zip, '[Content_Types].xml'), opts);
@@ -11374,7 +11378,7 @@ function read_zip(data, opts) {
 		case "base64": zip = new jszip(d, { base64:true }); break;
 		case "binary": case "array": zip = new jszip(d, { base64:false }); break;
 		case "buffer": zip = new jszip(d); break;
-		case "file": zip=new jszip(d=_fs.readFileSync(data)); break;
+		//case "file": zip=new jszip(d=_fs.readFileSync(data)); break;
 		default: throw new Error("Unrecognized type " + o.type);
 	}
 	return parse_zip(zip, o);
@@ -11384,7 +11388,7 @@ function readSync(data, opts) {
 	var zip, d = data, isfile = false, n;
 	var o = opts||{};
 	if(!o.type) o.type = (has_buf && Buffer.isBuffer(data)) ? "buffer" : "base64";
-	if(o.type == "file") { isfile = true; o.type = "buffer"; d = _fs.readFileSync(data); }
+	//if(o.type == "file") { isfile = true; o.type = "buffer"; d = _fs.readFileSync(data); }
 	switch((n = firstbyte(d, o))) {
 		case 0xD0:
 			if(isfile) o.type = "file";
@@ -11398,10 +11402,12 @@ function readSync(data, opts) {
 	}
 }
 
+/*
 function readFileSync(data, opts) {
 	var o = opts||{}; o.type = 'file';
 	return readSync(data, o);
 }
+*/
 function write_zip_type(wb, opts) {
 	var o = opts||{};
 	var z = write_zip(wb, o);
@@ -11409,7 +11415,7 @@ function write_zip_type(wb, opts) {
 		case "base64": return z.generate({type:"base64"});
 		case "binary": return z.generate({type:"string"});
 		case "buffer": return z.generate({type:"nodebuffer"});
-		case "file": return _fs.writeFileSync(o.file, z.generate({type:"nodebuffer"}));
+		//case "file": return _fs.writeFileSync(o.file, z.generate({type:"nodebuffer"}));
 		default: throw new Error("Unrecognized type " + o.type);
 	}
 }
@@ -11642,8 +11648,8 @@ var utils = {
 XLSX.parse_xlscfb = parse_xlscfb;
 XLSX.parse_zip = parse_zip;
 XLSX.read = readSync; //xlsread
-XLSX.readFile = readFileSync; //readFile
-XLSX.readFileSync = readFileSync;
+//XLSX.readFile = readFileSync; //readFile
+//XLSX.readFileSync = readFileSync;
 XLSX.write = writeSync;
 XLSX.writeFile = writeFileSync;
 XLSX.writeFileSync = writeFileSync;
