@@ -330,6 +330,7 @@ function read_date(blob, offset) {
 var fs;
 function readFileSync(filename, options) {
 	if(fs === undefined) fs = require('fs');
+	if(!fs.readFileSync) { throw "Unsupported fs"; }; 
 	return parse(fs.readFileSync(filename), options);
 }
 

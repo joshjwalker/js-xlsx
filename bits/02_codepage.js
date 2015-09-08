@@ -1,6 +1,7 @@
 var current_codepage = 1200, current_cptable;
 if(typeof module !== "undefined" && typeof require !== 'undefined') {
 	if(typeof cptable === 'undefined') cptable = require('./dist/cpexcel');
+	if(!cptable) { throw new Error("Unsupported cptable"); }
 	current_cptable = cptable[current_codepage];
 }
 function reset_cp() { set_cp(1200); }

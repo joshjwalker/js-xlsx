@@ -32,6 +32,11 @@
 			"pattern": "xlsx.js"
 		}
 	},
+	"browser": {
+		"fs": false,
+		"./dist/cpexcel": false,
+		"./ods": false
+	},
 	"bugs": { "url": "https://github.com/SheetJS/js-xlsx/issues" },
 	"license": "Apache-2.0",
 	"engines": { "node": ">=0.8" }
